@@ -1,0 +1,19 @@
+{
+  "name": "blazor-openlayers",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "rollup-build": "rollup --config"
+  },
+  "author": "pandabytes",
+  "license": "MIT",
+  "devDependencies": {
+    "@microsoft/dotnet-js-interop": "^7.0.14",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.14.0",
+    "rollup-plugin-multi-input": "^1.4.1"
+  }
+}
