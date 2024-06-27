@@ -23,14 +23,8 @@ internal sealed class OpenLayersInteropModule : BaseJsModule
     ModulePath = string.Join('/', pathComponents);
   }
 
-  public async Task CreateMapAsync(string mapId, MapOptions? mapOptions = null)
+  public async Task CreateMapAsync(string mapId, MapOptions mapOptions)
   {
     await Module.InvokeVoidAsync($"{OpenLayersInteropObj}.createMap", mapId, mapOptions);
   }
-
-  public async Task SetLayersAsync(string mapId, IDictionary<string, string> layers)
-  {
-    await Module.InvokeVoidAsync($"{OpenLayersInteropObj}.setLayers", mapId, layers);
-  }
-
 }
