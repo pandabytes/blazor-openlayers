@@ -17,7 +17,6 @@ type LayerSource = typeof LayerSources[number];
  * Mirror C# type.
  */
 type MapOptionsWrapper = {
-  target: string;
   viewOptions: ViewOptions
   layers: {
     [key in LayerType]: LayerSource;

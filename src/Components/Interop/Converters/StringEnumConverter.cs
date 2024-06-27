@@ -3,6 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace Blazor.OpenLayers.Components.Interop.Converters;
 
+/// <summary>
+/// Borrowed idea from https://watzek.dev/posts/2023/09/16/solving-the-dictionary-json-serialization-puzzle-in-.net/.
+/// </summary>
+/// <typeparam name="TEnum"></typeparam>
 internal sealed class StringEnumConverter<TEnum> : JsonConverter<TEnum?> where TEnum : StringEnum
 {
   public override TEnum? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

@@ -8,4 +8,22 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
-<MapComponent Id="map" />
+<MapComponent Id="map" Options=@_mapOptions />
+
+@code
+{
+  private MapOptions _mapOptions = null!;
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    _mapOptions = new()
+    {
+      ViewOptions = new() { Center = new(0, 0), Zoom = 2 },
+      Layers = new Dictionary<LayerType, LayerSource>
+      {
+        { LayerType.Tile, LayerSource.OSM }
+      }
+    };
+  }
+}
