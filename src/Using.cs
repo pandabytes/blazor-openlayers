@@ -6,3 +6,4 @@ global using Blazor.Core.Interop.Callbacks;
 
 global using Blazor.OpenLayers.Components;
 global using Blazor.OpenLayers.Components.Interop.Modules.OpenLayersInterop;
+global using Blazor.OpenLayers.Components.Interop.Options;
