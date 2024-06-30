@@ -6,35 +6,41 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.Core" Version="1.0.9" />
+    <PackageReference Include="Blazor.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.20" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.2.2">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.4.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
+  <!-- Run "npm install" when package.json has not changed.
+       This prevents npm install to run every time dotnet build is run.
+       Taken from: https://www.meziantou.net/running-npm-tasks-when-building-a-dotnet-project.htm
+  -->
+  <PropertyGroup>
+    <ProjectRoot>$(MSBuildProjectDirectory)</ProjectRoot>
+    <NpmInstallStampFile>$(ProjectRoot)/node_modules/.install-stamp</NpmInstallStampFile>
+  </PropertyGroup>
+
   <Target Name="RemoveWwwRootBeforeBuild" BeforeTargets="BeforeBuild">
-    <RemoveDir Directories="$(ProjectRoot)/wwwroot/"/>
+    <RemoveDir Directories="$(ProjectRoot)/wwwroot/" />
   </Target>
 
   <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="$(ProjectRoot)/package.json" Outputs="$(NpmInstallStampFile)">
-    <Exec WorkingDirectory="$(NpmRoot)"
-          Command="npm install" />
+    <Exec WorkingDirectory="$(NpmRoot)" Command="npm install" />
     <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
   </Target>
 
   <Target Name="RunNpmBuild" AfterTargets="PostBuildEvent">
-    <Exec WorkingDirectory="$(ProjectRoot)"
-          Command="npm run rollup-build" />
+    <Exec WorkingDirectory="$(ProjectRoot)" Command="npm run rollup-build" />
   </Target>
 
 </Project>

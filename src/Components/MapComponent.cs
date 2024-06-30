@@ -3,7 +3,7 @@ namespace Blazor.OpenLayers.Components;
 public partial class MapComponent : BaseScopeComponent
 {
   [InjectScope, AutoImportJsModule]
-  private readonly OpenLayersInteropModule _openLayersInteropModule = null!;
+  private OpenLayersInteropModule OpenLayersInterop { get; init; } = null!;
 
   [Parameter, EditorRequired]
   public string Id { get; init; } = string.Empty;
@@ -20,7 +20,7 @@ public partial class MapComponent : BaseScopeComponent
     
     if (firstRender)
     {
-      await _openLayersInteropModule.CreateMapAsync(Id, Options);
+      await OpenLayersInterop.CreateMapAsync(Id, Options);
     }
   }
 
