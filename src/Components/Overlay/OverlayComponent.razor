@@ -1,29 +1,21 @@
-<div id=@(Options.ElementId) style=@Style class=@Class>
+@inherits MapSubComponent
+
+<div id=@CompositeId style=@Style class=@Class>
 </div>
 
 @code
 {
-  [Parameter]
-  public string Style { get; init; } = string.Empty;
-
-  [Parameter]
-  public string Class { get; init; } = string.Empty;
-
   [Parameter, EditorRequired]
   public OverlayOptions Options { get; init; } = null!;
 
-  [CascadingParameter]
-  private MapComponent Map { get; init; } = null!;
-
   protected override void OnParametersSet()
   {
+    base.OnParametersSet();
+
     if (Options is null)
     {
-      return;
+      throw new ArgumentNullException(nameof(Options));
     }
-
-    // Use set to prevent duplicate overlay ids
-    var o = Options with { ElementId = $"{Map.Id}-{Options.ElementId}" };
   }
 
   protected override void OnInitialized()

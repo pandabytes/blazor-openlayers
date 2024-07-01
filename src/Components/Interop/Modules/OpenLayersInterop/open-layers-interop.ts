@@ -14,6 +14,10 @@ const LayerSources = ['OSM'] as const;
 type LayerType = typeof LayerTypes[number];
 type LayerSource = typeof LayerSources[number];
 
+type OverlayOptions = {
+  coordinate: Coordinate;
+};
+
 /**
  * Mirror C# type.
  */
@@ -22,10 +26,9 @@ type MapOptionsWrapper = {
   layers: {
     [key in LayerType]: LayerSource;
   },
-  overlays: Array<{
-    elementId: string;
-    coordinate: Coordinate;
-  }>;
+  overlays?: {
+    [elementId: string]: OverlayOptions;
+  }
 };
 
 // type BaseEventSlim = {
@@ -53,17 +56,11 @@ class OpenLayersInterop {
     }
 
     console.log(mapOptions);
-    const overlays = mapOptions.overlays.map(overlay => {
-      return new Overlay({
-        position: overlay.coordinate,
-        element: document.getElementById(overlay.elementId),
-      });
-    });
 
     const map = new OpenLayerMap({ 
       target: mapId,
       view: mapOptions.viewOptions ? new View(mapOptions.viewOptions) : undefined,
-      overlays,
+      overlays: OpenLayersInterop.getOverlays(mapOptions.overlays),
     });
 
     if (mapOptions.layers) {
@@ -135,6 +132,20 @@ class OpenLayersInterop {
       return new OSM();
     }
     return undefined;
+  }
+
+  private static getOverlays(inputOverlays?: { [elementId: string]: OverlayOptions; }): Array<Overlay> {
+    if (!inputOverlays) {
+      return [];
+    }
+
+    return Object.keys(inputOverlays).map(elementId => {
+      const overlayOpts = inputOverlays[elementId];
+      return new Overlay({
+        position: overlayOpts.coordinate,
+        element: document.getElementById(elementId),
+      });
+    });
   }
 }
 

@@ -2,7 +2,7 @@ namespace Blazor.OpenLayers.Components.Map;
 
 public partial class MapComponent : BaseScopeComponent
 {
-  private IList<OverlayComponent> OverlaysList { get; init; } = new List<OverlayComponent>();
+  private readonly IDictionary<string, OverlayComponent> _overlays = new Dictionary<string, OverlayComponent>();
 
   [InjectScope, AutoImportJsModule]
   private OpenLayersInteropModule OpenLayersInterop { get; init; } = null!;
@@ -25,8 +25,7 @@ public partial class MapComponent : BaseScopeComponent
     
     if (firstRender)
     {
-      var overlaysOpts = OverlaysList.Select(o => o.Options).ToList();
-      
+      var overlaysOpts = _overlays.ToDictionary(p => p.Key, p => p.Value.Options );
       var options = Options with { Overlays = overlaysOpts };
       await OpenLayersInterop.CreateMapAsync(Id, options);
     }
@@ -49,11 +48,11 @@ public partial class MapComponent : BaseScopeComponent
 
   internal void AddOverlay(OverlayComponent overlay)
   {
-    OverlaysList.Add(overlay);
+    _overlays.Add(overlay.CompositeId, overlay);
   }
 
   internal void RemoveOverlay(OverlayComponent overlay)
   {
-    OverlaysList.Remove(overlay);
+    _overlays.Remove(overlay.CompositeId);
   }
 }

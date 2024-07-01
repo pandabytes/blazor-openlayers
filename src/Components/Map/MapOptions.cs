@@ -6,5 +6,5 @@ public sealed record MapOptions
 
   public IReadOnlyDictionary<LayerType, LayerSource>? Layers { get; init; }
 
-  public IReadOnlyList<OverlayOptions> Overlays { get; init; } = new List<OverlayOptions>();
+  public IReadOnlyDictionary<string, OverlayOptions> Overlays { get; init;} = new Dictionary<string, OverlayOptions>();
 }
