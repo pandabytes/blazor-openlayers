@@ -1,8 +1,4 @@
-
-
-using System.Text.Json.Serialization;
-
-namespace Blazor.OpenLayers.Components.Interop.Options;
+namespace Blazor.OpenLayers.Components.Layers;
 
 [JsonConverter(typeof(StringEnumConverter<LayerType>))]
 public sealed class LayerType : StringEnum

@@ -27,4 +27,11 @@ internal sealed class OpenLayersInteropModule : BaseJsModule
   {
     await Module.InvokeVoidAsync($"{OpenLayersInteropObj}.createMap", mapId, mapOptions);
   }
+
+  // public async Task RegisterAsync(string mapId, Action<MapBrowserEventSlim> handler)
+  // {
+  //   var callbackInterop = new ActionCallbackInterop<MapBrowserEventSlim>(handler);
+  //   CallbackInterops.Add(callbackInterop);
+  //   await Module.InvokeVoidAsync($"{OpenLayersInteropObj}.registerSingleClickHandler", mapId, callbackInterop);
+  // }
 }

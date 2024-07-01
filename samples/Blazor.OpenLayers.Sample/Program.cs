@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blazor.OpenLayers.Sample;
 using Blazor.OpenLayers;
+using Blazor.Core;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -11,4 +12,7 @@ builder.Services
   .AddOpenLayers()
   .AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-await builder.Build().RunAsync();
+var webHost = builder.Build();
+
+await webHost.Services.RegisterAttachReviverAsync();
+await webHost.RunAsync();

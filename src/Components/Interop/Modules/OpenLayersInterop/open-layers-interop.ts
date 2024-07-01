@@ -4,8 +4,9 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { Source } from 'ol/source';
 import Layer from 'ol/layer/Layer';
-import { View } from 'ol';
+import { MapBrowserEvent, Overlay, View } from 'ol';
 import { ViewOptions } from 'ol/View';
+import { Coordinate, toStringHDMS } from 'ol/coordinate';
 
 const LayerTypes = ['Tile'] as const;
 const LayerSources = ['OSM'] as const;
@@ -20,8 +21,28 @@ type MapOptionsWrapper = {
   viewOptions: ViewOptions
   layers: {
     [key in LayerType]: LayerSource;
-  }
+  },
+  overlays: Array<{
+    elementId: string;
+    coordinate: Coordinate;
+  }>;
 };
+
+// type BaseEventSlim = {
+//   mapId: string;
+// };
+
+// type MapEventSlim = BaseEventSlim & {
+//   type: string;
+// };
+
+// type MapBrowserEventSlim = MapEventSlim & {
+//   coordinate: Coordinate;
+//   dragging: boolean;
+//   // frameRate
+//   // pixel
+//   // target
+// };
 
 class OpenLayersInterop {
   private maps = new Map<string, OpenLayerMap>();
@@ -31,9 +52,18 @@ class OpenLayersInterop {
       return;
     }
 
+    console.log(mapOptions);
+    const overlays = mapOptions.overlays.map(overlay => {
+      return new Overlay({
+        position: overlay.coordinate,
+        element: document.getElementById(overlay.elementId),
+      });
+    });
+
     const map = new OpenLayerMap({ 
       target: mapId,
-      view: mapOptions.viewOptions ? new View(mapOptions.viewOptions) : undefined
+      view: mapOptions.viewOptions ? new View(mapOptions.viewOptions) : undefined,
+      overlays,
     });
 
     if (mapOptions.layers) {
@@ -55,6 +85,15 @@ class OpenLayersInterop {
       map.setLayers(layersArray);
     }
 
+    // map.on('singleclick', function (evt) {
+    //   const coordinate = evt.coordinate;
+    
+    //   const e = overlays[0].getElement();
+    //   e.innerHTML = '<p>fuck you bitch</p>';
+    //   overlays[0].setPosition(coordinate);
+    //   console.log('JS: clicked on map')
+    // });
+
     this.maps.set(mapId, map);
   }
 
@@ -69,6 +108,20 @@ class OpenLayersInterop {
   public mapExist(mapId: string): boolean {
     return this.maps.has(mapId);
   }
+
+  // public registerSingleClickHandler(mapId: string, eventHandler: (args: MapBrowserEventSlim) => void) {
+  //   console.log(eventHandler);
+  //   const openLayerMap = this.getMap(mapId);
+
+  //   openLayerMap.on('singleclick', event => {
+  //     eventHandler({
+  //       mapId: mapId,
+  //       type: event.type,
+  //       coordinate: event.coordinate,
+  //       dragging: event.dragging
+  //     });
+  //   });
+  // }
 
   private static getLayer(layerType: LayerType): Layer | undefined {
     if (layerType === 'Tile') {

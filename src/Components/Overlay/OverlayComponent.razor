@@ -1,0 +1,38 @@
+<div id=@(Options.ElementId) style=@Style class=@Class>
+</div>
+
+@code
+{
+  [Parameter]
+  public string Style { get; init; } = string.Empty;
+
+  [Parameter]
+  public string Class { get; init; } = string.Empty;
+
+  [Parameter, EditorRequired]
+  public OverlayOptions Options { get; init; } = null!;
+
+  [CascadingParameter]
+  private MapComponent Map { get; init; } = null!;
+
+  protected override void OnParametersSet()
+  {
+    if (Options is null)
+    {
+      return;
+    }
+
+    // Use set to prevent duplicate overlay ids
+    var o = Options with { ElementId = $"{Map.Id}-{Options.ElementId}" };
+  }
+
+  protected override void OnInitialized()
+  {
+    Map.AddOverlay(this);
+  }
+
+  public void Dispose()
+  {
+    Map.RemoveOverlay(this);
+  }  
+}

@@ -1,7 +1,9 @@
-namespace Blazor.OpenLayers.Components;
+namespace Blazor.OpenLayers.Components.Map;
 
 public partial class MapComponent : BaseScopeComponent
 {
+  private IList<OverlayComponent> OverlaysList { get; init; } = new List<OverlayComponent>();
+
   [InjectScope, AutoImportJsModule]
   private OpenLayersInteropModule OpenLayersInterop { get; init; } = null!;
 
@@ -14,13 +16,19 @@ public partial class MapComponent : BaseScopeComponent
   [Parameter]
   public string Style { get; init; } = "width: 100%; height: 400px";
 
+  [Parameter]
+  public RenderFragment? Overlays { get; set; }
+
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     await base.OnAfterRenderAsync(firstRender);
     
     if (firstRender)
     {
-      await OpenLayersInterop.CreateMapAsync(Id, Options);
+      var overlaysOpts = OverlaysList.Select(o => o.Options).ToList();
+      
+      var options = Options with { Overlays = overlaysOpts };
+      await OpenLayersInterop.CreateMapAsync(Id, options);
     }
   }
 
@@ -37,5 +45,15 @@ public partial class MapComponent : BaseScopeComponent
     {
       throw new ArgumentException($"{nameof(Options)} cannot be null.");
     }
+  }
+
+  internal void AddOverlay(OverlayComponent overlay)
+  {
+    OverlaysList.Add(overlay);
+  }
+
+  internal void RemoveOverlay(OverlayComponent overlay)
+  {
+    OverlaysList.Remove(overlay);
   }
 }

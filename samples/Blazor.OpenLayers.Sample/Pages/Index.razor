@@ -8,7 +8,12 @@ Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
-<MapComponent Id="map" Options=@_mapOptions />
+<MapComponent Id="map" Options=@_mapOptions>
+  <Overlays>
+    <OverlayComponent Options=@(new() { ElementId = "pop1", Position = new(0, 0) })></OverlayComponent>
+    <OverlayComponent Options=@(new() { ElementId = "pop2", Position = new(0, 0) })></OverlayComponent>
+  </Overlays>
+</MapComponent>
 
 @code
 {
@@ -23,7 +28,7 @@ Welcome to your new app.
       Layers = new Dictionary<LayerType, LayerSource>
       {
         { LayerType.Tile, LayerSource.OSM }
-      }
+      },
     };
   }
 }

@@ -1,7 +1,6 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace Blazor.OpenLayers.Components.Interop.Converters;
+namespace Blazor.OpenLayers.Coordinates;
 
 internal sealed class CoordinateConverter : JsonConverter<Coordinate?>
 {

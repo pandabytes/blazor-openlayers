@@ -1,0 +1,12 @@
+@inherits BaseScopeComponent
+
+<CascadingValue Value="this">
+  @Overlays
+  <div id=@Id style=@Style></div>
+
+  @* <div id=@($"{Id}-popup")>
+    <a href="#" id="popup-closer">✖</a>
+    <div id="popup-content"></div>
+  </div> *@
+
+</CascadingValue>
