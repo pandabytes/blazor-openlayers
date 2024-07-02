@@ -10,13 +10,58 @@ Welcome to your new app.
 
 <MapComponent Id="map" Options=@_mapOptions>
   <Overlays>
-    <OverlayComponent Id="p1" Options=@(new() { Position = new(0, 0) })></OverlayComponent>
+    <OverlayComponent Id="p1"
+                      Options=@(new() { Position = new(16.3725, 48.208889) })>
+      <a class="overlay" id="vienna" target="_blank" href="https://en.wikipedia.org/wiki/Vienna">Vienna</a>
+    </OverlayComponent>
+
+    <OverlayComponent Id="p2"
+                      Options=@(new()
+                      {
+                        Position = new(16.3725, 48.208889),
+                        Positioning = Positioning.BottomCenter,
+                        StopEvent = false,
+                      })>
+      <div id="marker" title="Marker"></div>
+    </OverlayComponent>
+
   </Overlays>
 </MapComponent>
+
+<style>
+  .map {
+    width: 100%;
+    height: 400px;
+  }
+  #marker {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #088;
+    border-radius: 10px;
+    background-color: #0FF;
+    opacity: 0.5;
+  }
+  #vienna {
+    text-decoration: none;
+    color: white;
+    font-size: 11pt;
+    font-weight: bold;
+    text-shadow: black 0.1em 0.1em 0.2em;
+  }
+  .popover-body {
+    min-width: 276px;
+  }
+</style>
 
 @code
 {
   private MapOptions _mapOptions = null!;
+
+  private string HandleOnMapClicked(object args)
+  {
+    Console.WriteLine(args);
+    return "<p>You clicked here!</p>";
+  }
 
   protected override void OnInitialized()
   {

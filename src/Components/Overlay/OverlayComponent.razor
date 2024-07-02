@@ -1,6 +1,7 @@
 @inherits MapSubComponent
 
 <div id=@CompositeId style=@Style class=@Class>
+  @ChildContent
 </div>
 
 @code
@@ -8,6 +9,10 @@
   [Parameter, EditorRequired]
   public OverlayOptions Options { get; init; } = null!;
 
+  [Parameter]
+  public RenderFragment? ChildContent { get; init; }
+
+  /// <inheritdoc />
   protected override void OnParametersSet()
   {
     base.OnParametersSet();

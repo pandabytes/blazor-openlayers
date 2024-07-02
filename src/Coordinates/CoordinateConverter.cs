@@ -26,8 +26,8 @@ internal sealed class CoordinateConverter : JsonConverter<Coordinate?>
     }
 
     writer.WriteStartArray();
-    writer.WriteNumberValue(value.X);
-    writer.WriteNumberValue(value.Y);
+    writer.WriteNumberValue(value.Longitude);
+    writer.WriteNumberValue(value.Latitude);
     writer.WriteEndArray();
   }
 }

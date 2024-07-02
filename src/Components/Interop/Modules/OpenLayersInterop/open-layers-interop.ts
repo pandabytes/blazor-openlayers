@@ -7,6 +7,8 @@ import Layer from 'ol/layer/Layer';
 import { MapBrowserEvent, Overlay, View } from 'ol';
 import { ViewOptions } from 'ol/View';
 import { Coordinate, toStringHDMS } from 'ol/coordinate';
+import { fromLonLat } from 'ol/proj';
+import { Positioning } from 'ol/Overlay';
 
 const LayerTypes = ['Tile'] as const;
 const LayerSources = ['OSM'] as const;
@@ -15,7 +17,9 @@ type LayerType = typeof LayerTypes[number];
 type LayerSource = typeof LayerSources[number];
 
 type OverlayOptions = {
-  coordinate: Coordinate;
+  position: Coordinate;
+  positioning?: Positioning;
+  stopEvent?: boolean;
 };
 
 /**
@@ -23,12 +27,8 @@ type OverlayOptions = {
  */
 type MapOptionsWrapper = {
   viewOptions: ViewOptions
-  layers: {
-    [key in LayerType]: LayerSource;
-  },
-  overlays?: {
-    [elementId: string]: OverlayOptions;
-  }
+  layers: { [key in LayerType]: LayerSource; },
+  overlays?: { [elementId: string]: OverlayOptions; }
 };
 
 // type BaseEventSlim = {
@@ -85,10 +85,12 @@ class OpenLayersInterop {
     // map.on('singleclick', function (evt) {
     //   const coordinate = evt.coordinate;
     
+    //   const overlays: Array<Overlay> = [];
+    //   map.getOverlays().forEach(o => overlays.push(o));
+
     //   const e = overlays[0].getElement();
-    //   e.innerHTML = '<p>fuck you bitch</p>';
+    //   e.innerHTML = '<p>hello</p>';
     //   overlays[0].setPosition(coordinate);
-    //   console.log('JS: clicked on map')
     // });
 
     this.maps.set(mapId, map);
@@ -107,7 +109,6 @@ class OpenLayersInterop {
   }
 
   // public registerSingleClickHandler(mapId: string, eventHandler: (args: MapBrowserEventSlim) => void) {
-  //   console.log(eventHandler);
   //   const openLayerMap = this.getMap(mapId);
 
   //   openLayerMap.on('singleclick', event => {
@@ -142,8 +143,10 @@ class OpenLayersInterop {
     return Object.keys(inputOverlays).map(elementId => {
       const overlayOpts = inputOverlays[elementId];
       return new Overlay({
-        position: overlayOpts.coordinate,
+        position: fromLonLat(overlayOpts.position),
         element: document.getElementById(elementId),
+        positioning: overlayOpts.positioning,
+        stopEvent: overlayOpts.stopEvent,
       });
     });
   }
