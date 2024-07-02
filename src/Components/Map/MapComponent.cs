@@ -30,8 +30,7 @@ public partial class MapComponent : BaseScopeComponent
       var overlayOpts = GetSubComponents<OverlayComponent>()
         .ToDictionary(p => p.Key, p => p.Value.Options);
 
-      var options = Options with { Overlays = overlayOpts };
-      await OpenLayersInterop.CreateMapAsync(Id, options);
+      await OpenLayersInterop.CreateMapAsync(Id, Options, overlayOpts);
     }
   }
 

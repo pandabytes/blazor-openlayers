@@ -28,7 +28,6 @@ type OverlayOptions = {
 type MapOptionsWrapper = {
   viewOptions: ViewOptions
   layers: { [key in LayerType]: LayerSource; },
-  overlays?: { [elementId: string]: OverlayOptions; }
 };
 
 // type BaseEventSlim = {
@@ -50,17 +49,18 @@ type MapOptionsWrapper = {
 class OpenLayersInterop {
   private maps = new Map<string, OpenLayerMap>();
 
-  public createMap(mapId: string, mapOptions: MapOptionsWrapper): void {
+  public createMap(mapId: string, mapOptions: MapOptionsWrapper, overlays?: { [elementId: string]: OverlayOptions; }): void {
     if (this.mapExist(mapId)) {
       return;
     }
 
     console.log(mapOptions);
+    console.log(overlays);
 
     const map = new OpenLayerMap({ 
       target: mapId,
       view: mapOptions.viewOptions ? new View(mapOptions.viewOptions) : undefined,
-      overlays: OpenLayersInterop.getOverlays(mapOptions.overlays),
+      overlays: OpenLayersInterop.getOverlays(overlays),
       layers: OpenLayersInterop.getLayers(mapOptions.layers),
     });
 
