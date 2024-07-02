@@ -17,14 +17,4 @@
       throw new ArgumentNullException(nameof(Options));
     }
   }
-
-  protected override void OnInitialized()
-  {
-    Map.AddOverlay(this);
-  }
-
-  public void Dispose()
-  {
-    Map.RemoveOverlay(this);
-  }  
 }

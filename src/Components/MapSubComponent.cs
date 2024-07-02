@@ -1,6 +1,6 @@
 namespace Blazor.OpenLayers.Components;
 
-public abstract class MapSubComponent : ComponentBase
+public abstract class MapSubComponent : ComponentBase, IDisposable
 {
   [Parameter, EditorRequired]
   public string Id { get; init; } = string.Empty;
@@ -30,5 +30,18 @@ public abstract class MapSubComponent : ComponentBase
     {
       throw new InvalidOperationException($"Expected value to be cascaded to parameter \"{nameof(Map)}\".");
     }
+  }
+
+  /// <inheritdoc />
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    Map.AddSubComponent(this);
+  }
+
+  /// <inheritdoc />
+  public void Dispose()
+  {
+    Map.RemoveSubComponent(this);
   }
 }

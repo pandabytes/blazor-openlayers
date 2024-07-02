@@ -4,6 +4,9 @@ public partial class MapComponent : BaseScopeComponent
 {
   private readonly IDictionary<string, OverlayComponent> _overlays = new Dictionary<string, OverlayComponent>();
 
+  private readonly IDictionary<string, IDictionary<string, MapSubComponent>> _subComponents = 
+    new Dictionary<string, IDictionary<string, MapSubComponent>>();
+
   [InjectScope, AutoImportJsModule]
   private OpenLayersInteropModule OpenLayersInterop { get; init; } = null!;
 
@@ -25,8 +28,10 @@ public partial class MapComponent : BaseScopeComponent
     
     if (firstRender)
     {
-      var overlaysOpts = _overlays.ToDictionary(p => p.Key, p => p.Value.Options );
-      var options = Options with { Overlays = overlaysOpts };
+      var overlayOpts = GetSubComponents<OverlayComponent>()
+        .ToDictionary(p => p.Key, p => p.Value.Options);
+
+      var options = Options with { Overlays = overlayOpts };
       await OpenLayersInterop.CreateMapAsync(Id, options);
     }
   }
@@ -46,13 +51,35 @@ public partial class MapComponent : BaseScopeComponent
     }
   }
 
-  internal void AddOverlay(OverlayComponent overlay)
+  internal void AddSubComponent(MapSubComponent subComponent)
   {
-    _overlays.Add(overlay.CompositeId, overlay);
+    var typeName = subComponent.GetType().FullName!;
+    if (!_subComponents.ContainsKey(typeName))
+    {
+      _subComponents.Add(typeName, new Dictionary<string, MapSubComponent>());
+    }
+
+    _subComponents[typeName].TryAdd(subComponent.CompositeId, subComponent);
   }
 
-  internal void RemoveOverlay(OverlayComponent overlay)
+  internal void RemoveSubComponent(MapSubComponent subComponent)
   {
-    _overlays.Remove(overlay.CompositeId);
+    var typeName = subComponent.GetType().FullName!;
+    if (!_subComponents.ContainsKey(typeName))
+    {
+      return;
+    }
+    _subComponents[typeName].Remove(subComponent.CompositeId);
+  }
+
+  private IDictionary<string, TComp> GetSubComponents<TComp>() where TComp : MapSubComponent
+  {
+    var typeName = typeof(TComp).FullName!;
+    if (!_subComponents.TryGetValue(typeName, out var components))
+    {
+      return new Dictionary<string, TComp>();
+    }
+
+    return components.ToDictionary(pair => pair.Key, pair => (TComp)pair.Value);
   }
 }
