@@ -11,5 +11,5 @@ global using Blazor.OpenLayers.Components.Layers;
 global using Blazor.OpenLayers.Components.Map;
 global using Blazor.OpenLayers.Components.Overlay;
 global using Blazor.OpenLayers.Components.Views;
-global using Blazor.OpenLayers.Components.Interop.Modules.OpenLayersInterop;
+global using Blazor.OpenLayers.Interop.Modules.OpenLayersInterop;
 global using Blazor.OpenLayers.Coordinates;

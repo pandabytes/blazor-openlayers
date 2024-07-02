@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace Blazor.OpenLayers.Components.Interop.Modules.OpenLayersInterop;
+namespace Blazor.OpenLayers.Interop.Modules.OpenLayersInterop;
 
 internal sealed class OpenLayersInteropModule : BaseJsModule
 {
@@ -14,7 +14,6 @@ internal sealed class OpenLayersInteropModule : BaseJsModule
     {
       ModulePrefixPath,
       "js",
-      nameof(Components),
       nameof(Interop),
       nameof(Modules),
       nameof(OpenLayersInterop),
