@@ -28,10 +28,13 @@
   <PropertyGroup>
     <ProjectRoot>$(MSBuildProjectDirectory)</ProjectRoot>
     <NpmInstallStampFile>$(ProjectRoot)/node_modules/.install-stamp</NpmInstallStampFile>
+    <Wwwroot>$(ProjectRoot)/wwwroot</Wwwroot>
+    <OpenLayerCssName>ol.css</OpenLayerCssName>
+    <OpenLayerCssOutput>$(Wwwroot)/css/$(OpenLayerCssName)</OpenLayerCssOutput>
   </PropertyGroup>
 
-  <Target Name="RemoveWwwRootBeforeBuild" BeforeTargets="BeforeBuild">
-    <RemoveDir Directories="$(ProjectRoot)/wwwroot/" />
+  <Target Name="RemoveWwwrootBeforeBuild" BeforeTargets="BeforeBuild">
+    <RemoveDir Directories="$(Wwwroot)" />
   </Target>
 
   <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="$(ProjectRoot)/package.json" Outputs="$(NpmInstallStampFile)">
@@ -41,6 +44,10 @@
 
   <Target Name="RunNpmBuild" AfterTargets="PostBuildEvent">
     <Exec WorkingDirectory="$(ProjectRoot)" Command="npm run rollup-build" />
+  </Target>
+
+  <Target Name="CopyOpenLayerCss" AfterTargets="NpmInstall" Outputs="$(OpenLayerCssOutput)">
+    <Copy SourceFiles="$(ProjectRoot)/node_modules/ol/$(OpenLayerCssName)" DestinationFiles="$(OpenLayerCssOutput)" />
   </Target>
 
 </Project>

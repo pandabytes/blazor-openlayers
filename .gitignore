@@ -484,10 +484,7 @@ buildNumber.properties
 local.txt
 Test.cs
 
-# Exclude the compiled JavaScript sources. The TypeScript and actual library files are enough.
-family-tree-interop.js
-family-tree-interop.js.map
-
 src/**/wwwroot/**/*.js
+src/**/wwwroot/**/*.css
 src/tools/NativeCredentialStore/tools/**
 mocha-tests/
