@@ -2,8 +2,6 @@ namespace Blazor.OpenLayers.Components.Map;
 
 public partial class MapComponent : BaseScopeComponent
 {
-  private readonly IDictionary<string, OverlayComponent> _overlays = new Dictionary<string, OverlayComponent>();
-
   private readonly IDictionary<string, IDictionary<string, MapSubComponent>> _subComponents = 
     new Dictionary<string, IDictionary<string, MapSubComponent>>();
 
@@ -22,6 +20,7 @@ public partial class MapComponent : BaseScopeComponent
   [Parameter]
   public RenderFragment? Overlays { get; set; }
 
+  /// <inheritdoc />
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     await base.OnAfterRenderAsync(firstRender);
@@ -36,6 +35,7 @@ public partial class MapComponent : BaseScopeComponent
     }
   }
 
+  /// <inheritdoc />
   protected override void OnParametersSet()
   {
     base.OnParametersSet();
@@ -49,6 +49,13 @@ public partial class MapComponent : BaseScopeComponent
     {
       throw new ArgumentException($"{nameof(Options)} cannot be null.");
     }
+  }
+
+  /// <inheritdoc />
+  protected async override ValueTask DisposeAsyncCore()
+  {
+    await OpenLayersInterop.RemoveMapAsync(Id);
+    await base.DisposeAsyncCore();
   }
 
   internal void AddSubComponent(MapSubComponent subComponent)

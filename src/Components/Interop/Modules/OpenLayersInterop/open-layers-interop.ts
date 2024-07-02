@@ -61,26 +61,8 @@ class OpenLayersInterop {
       target: mapId,
       view: mapOptions.viewOptions ? new View(mapOptions.viewOptions) : undefined,
       overlays: OpenLayersInterop.getOverlays(mapOptions.overlays),
+      layers: OpenLayersInterop.getLayers(mapOptions.layers),
     });
-
-    if (mapOptions.layers) {
-      const layersArray = Object.entries(mapOptions.layers).map(entry => {
-        const layerType = entry[0] as LayerType;
-        const layerSource = entry[1];
-  
-        const layer = OpenLayersInterop.getLayer(layerType);
-        const source = OpenLayersInterop.getLayerSource(layerSource);
-  
-        if (!layer || !source) {
-          throw new InvalidArgumentError(`Invalid layer type "${layerType}" and/or source "${layerSource}".`);
-        }
-  
-        layer.setSource(source);
-        return layer;
-      });
-
-      map.setLayers(layersArray);
-    }
 
     // map.on('singleclick', function (evt) {
     //   const coordinate = evt.coordinate;
@@ -108,6 +90,18 @@ class OpenLayersInterop {
     return this.maps.has(mapId);
   }
 
+  public removeMap(mapId: string) {
+    if (!this.mapExist(mapId)) {
+      return;
+    }
+
+    // https://github.com/openlayers/openlayers/issues/11052
+    // https://github.com/openlayers/openlayers/pull/3420
+    const openLayerMap = this.getMap(mapId);
+    openLayerMap.setTarget(null);
+    this.maps.delete(mapId);
+  }
+
   // public registerSingleClickHandler(mapId: string, eventHandler: (args: MapBrowserEventSlim) => void) {
   //   const openLayerMap = this.getMap(mapId);
 
@@ -120,20 +114,6 @@ class OpenLayersInterop {
   //     });
   //   });
   // }
-
-  private static getLayer(layerType: LayerType): Layer | undefined {
-    if (layerType === 'Tile') {
-      return new TileLayer();
-    }
-    return undefined;
-  }
-
-  private static getLayerSource(layerSource: LayerSource): Source | undefined {
-    if (layerSource === 'OSM') {
-      return new OSM();
-    }
-    return undefined;
-  }
 
   private static getOverlays(inputOverlays?: { [elementId: string]: OverlayOptions; }): Array<Overlay> {
     if (!inputOverlays) {
@@ -149,6 +129,41 @@ class OpenLayersInterop {
         stopEvent: overlayOpts.stopEvent,
       });
     });
+  }
+
+  private static getLayers(inputLayers?: { [key in LayerType]: LayerSource; }): Array<Layer> {
+    if (!inputLayers) {
+      return [];
+    }
+
+    return Object.entries(inputLayers).map(entry => {
+      const layerType = entry[0] as LayerType;
+      const layerSource = entry[1];
+
+      const layer = OpenLayersInterop.getLayer(layerType);
+      const source = OpenLayersInterop.getLayerSource(layerSource);
+
+      if (!layer || !source) {
+        throw new InvalidArgumentError(`Invalid layer type "${layerType}" and/or source "${layerSource}".`);
+      }
+
+      layer.setSource(source);
+      return layer;
+    });
+  }
+
+  private static getLayer(layerType: LayerType): Layer | undefined {
+    if (layerType === 'Tile') {
+      return new TileLayer();
+    }
+    return undefined;
+  }
+
+  private static getLayerSource(layerSource: LayerSource): Source | undefined {
+    if (layerSource === 'OSM') {
+      return new OSM();
+    }
+    return undefined;
   }
 }
 

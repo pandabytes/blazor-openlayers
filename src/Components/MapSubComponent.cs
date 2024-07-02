@@ -1,5 +1,11 @@
 namespace Blazor.OpenLayers.Components;
 
+/// <summary>
+/// 
+/// </summary>
+/// <remarks>
+/// Borrowed idea from https://github.com/dotnet/aspnetcore/issues/14886#issuecomment-549167572
+/// </remarks>
 public abstract class MapSubComponent : ComponentBase, IDisposable
 {
   [Parameter, EditorRequired]
@@ -43,5 +49,6 @@ public abstract class MapSubComponent : ComponentBase, IDisposable
   public void Dispose()
   {
     Map.RemoveSubComponent(this);
+    GC.SuppressFinalize(this);
   }
 }
