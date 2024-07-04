@@ -15,6 +15,9 @@ public partial class MapComponent : BaseScopeComponent
   public MapOptions Options { get; init; } = null!;
 
   [Parameter]
+  public string Class { get; init; } = string.Empty;
+
+  [Parameter]
   public string Style { get; init; } = "width: 100%; height: 400px";
 
   [Parameter]

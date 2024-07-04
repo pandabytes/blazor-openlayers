@@ -8,7 +8,7 @@ import { MapBrowserEvent, Overlay, View } from 'ol';
 import { ViewOptions } from 'ol/View';
 import { Coordinate, toStringHDMS } from 'ol/coordinate';
 import { fromLonLat } from 'ol/proj';
-import { Positioning } from 'ol/Overlay';
+import { Options as OpenLayerOverlayOptions } from 'ol/Overlay';
 
 const LayerTypes = ['Tile'] as const;
 const LayerSources = ['OSM'] as const;
@@ -16,11 +16,7 @@ const LayerSources = ['OSM'] as const;
 type LayerType = typeof LayerTypes[number];
 type LayerSource = typeof LayerSources[number];
 
-type OverlayOptions = {
-  position: Coordinate;
-  positioning?: Positioning;
-  stopEvent?: boolean;
-};
+type OverlayOptions = Omit<OpenLayerOverlayOptions, 'element'> & { elementId?: string; };
 
 /**
  * Mirror C# type.
@@ -70,9 +66,25 @@ class OpenLayersInterop {
     //   const overlays: Array<Overlay> = [];
     //   map.getOverlays().forEach(o => overlays.push(o));
 
-    //   const e = overlays[0].getElement();
-    //   e.innerHTML = '<p>hello</p>';
-    //   overlays[0].setPosition(coordinate);
+    //   // Object.keys(overlayHandlers).forEach(id => {
+    //   //   const overlay = overlays.filter(o => o.getElement().id === id)[0];  
+    //   //   console.log(`id: ${id} - ${overlay}`)
+    //   //   overlay.setPosition(coordinate);
+
+    //   //   const element = overlay.getElement();
+    //   //   const handler = overlayHandlers[id];
+    //   //   element.innerHTML = handler(coordinate);
+    //   // });
+
+    //   // const overlay = overlays.filter(o => o.getElement().id === 'map-test-p3')[0];
+    //   // const element = overlay.getElement();
+
+    //   // overlay.setPosition(coordinate);
+    //   // element.innerHTML = `<p>You clicked here:</p><code>${coordinate}</code>`;
+
+    //   // const e = overlays.filter(o => o.g)[0].getElement();
+    //   // e.innerHTML = '<p>hello</p>';
+    //   // overlays[0].setPosition(coordinate);
     // });
 
     this.maps.set(mapId, map);
@@ -102,7 +114,7 @@ class OpenLayersInterop {
     this.maps.delete(mapId);
   }
 
-  // public registerSingleClickHandler(mapId: string, eventHandler: (args: MapBrowserEventSlim) => void) {
+  // public registerSingleClickHandler(mapId: string, eventHandler: (args: any) => void) {
   //   const openLayerMap = this.getMap(mapId);
 
   //   openLayerMap.on('singleclick', event => {
@@ -122,11 +134,12 @@ class OpenLayersInterop {
 
     return Object.keys(inputOverlays).map(elementId => {
       const overlayOpts = inputOverlays[elementId];
+      const position = (overlayOpts.position) ? fromLonLat(overlayOpts.position) : undefined;
+      
       return new Overlay({
-        position: fromLonLat(overlayOpts.position),
+        ...overlayOpts,
+        position,
         element: document.getElementById(elementId),
-        positioning: overlayOpts.positioning,
-        stopEvent: overlayOpts.stopEvent,
       });
     });
   }
